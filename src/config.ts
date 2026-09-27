@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import type { ResultStatus } from './domain/types';
 
 function int(value: string | undefined, fallback: number): number {
   const parsed = Number.parseInt(value ?? '', 10);
@@ -9,11 +10,16 @@ export type BrokerMode = 'real' | 'mock';
 
 export const NAMING = {
   topicOrdersNew: 'newcron/dispatch/v1/orders/new',
-  topicResults: 'newcron/dispatch/v1/results',
-  topicResultsWildcard: 'newcron/dispatch/v1/results/#',
+  topicResultsPrefix: 'newcron/dispatch/v1/results',
+  topicResultsWildcard: 'newcron/dispatch/v1/results/>',
   queueOrdersAvailable: 'NEWCRON/Q01/ORDERS/AVAILABLE',
   queueResultsClients: 'NEWCRON/Q02/RESULTS/CLIENTS',
 } as const;
+
+export function resultsTopic(status: ResultStatus): string {
+  const slug = status.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+  return `${NAMING.topicResultsPrefix}/${slug}`;
+}
 
 export const QUEUE_DEFINITIONS: Array<{ name: string; subscriptionTopic: string }> = [
   {
