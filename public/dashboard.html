@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NewCron - Dashboard de Transportistas</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <h1>NewCron Global Dispatch</h1>
+      <div class="sub">Dashboard de transportistas - cargas disponibles</div>
+    </div>
+    <div class="actions">
+      <span class="badge"><span class="dot" id="broker-dot"></span><span id="broker-label">conectando</span></span>
+      <span class="badge info">Cola: <span id="queue-count">0</span> disponibles</span>
+      <nav>
+        <a href="/">Portal</a>
+        <a href="/dashboard" class="active">Transportistas</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Transportista</h2>
+      <div class="row">
+        <div>
+          <label for="carrierId">Carrier ID</label>
+          <input id="carrierId" placeholder="hauler-77" />
+        </div>
+        <div>
+          <label for="broker-detail">Conexion al broker</label>
+          <input id="broker-detail" disabled />
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="ghost" id="save-carrier">Guardar identidad</button>
+        </div>
+      </div>
+      <div class="muted" style="margin-top:10px">
+        Los pedidos se consumen de la cola NEWCRON/Q01/ORDERS/AVAILABLE y se retiran solo cuando
+        se aceptan (ack por mensaje).
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Pedidos disponibles</h2>
+      <div class="grid" id="orders"></div>
+      <div class="empty" id="orders-empty">No hay pedidos disponibles en este momento.</div>
+    </section>
+
+    <section class="panel">
+      <h2>Aceptadas recientemente</h2>
+      <div id="accepted"></div>
+      <div class="empty" id="accepted-empty">Todavia no has aceptado cargas en esta sesion.</div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="/carrier.js"></script>
+</body>
+</html>

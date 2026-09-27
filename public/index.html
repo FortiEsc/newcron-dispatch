@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NewCron - Portal de Shipper</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <h1>NewCron Global Dispatch</h1>
+      <div class="sub">Portal de shipper - solicitudes de carga</div>
+    </div>
+    <div class="actions">
+      <span class="badge"><span class="dot" id="broker-dot"></span><span id="broker-label">conectando</span></span>
+      <nav>
+        <a href="/" class="active">Portal</a>
+        <a href="/dashboard">Transportistas</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="banner" id="result"></div>
+
+    <section class="panel">
+      <h2>Nueva solicitud de despacho</h2>
+      <form id="request-form" class="stack">
+        <div class="row">
+          <div>
+            <label for="shipperOrderId">shipperOrderId</label>
+            <input id="shipperOrderId" name="shipperOrderId" required placeholder="6600111" />
+          </div>
+          <div>
+            <label for="shipperEmail">Email del shipper (opcional)</label>
+            <input id="shipperEmail" name="shipperEmail" type="email" placeholder="ops@yard.com" />
+          </div>
+          <div>
+            <label for="price">Precio (USD)</label>
+            <input id="price" name="price" type="number" min="1" step="1" required placeholder="900" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="pickupDate">Fecha de pickup</label>
+            <input id="pickupDate" name="pickupDate" type="date" required />
+          </div>
+          <div>
+            <label for="deliveryDate">Fecha de delivery</label>
+            <input id="deliveryDate" name="deliveryDate" type="date" required />
+          </div>
+          <div>
+            <label for="timezone">Zona horaria de validacion</label>
+            <input id="timezone" disabled value="America/New_York" />
+          </div>
+        </div>
+
+        <div>
+          <label>Paradas</label>
+          <div class="stack" id="stops"></div>
+          <button type="button" class="ghost small" id="add-stop">+ Agregar parada</button>
+        </div>
+
+        <div>
+          <label>Vehiculos</label>
+          <div class="stack" id="vehicles"></div>
+          <button type="button" class="ghost small" id="add-vehicle">+ Agregar vehiculo</button>
+        </div>
+
+        <div>
+          <label for="notes">transportationReleaseNotes</label>
+          <textarea id="notes" rows="2" placeholder="Verify the pickup date; shipments cannot be delivered after 3:00 p.m. ..."></textarea>
+        </div>
+
+        <div class="actions">
+          <button type="submit" id="submit-btn">Enviar solicitud</button>
+          <span class="muted">Cada solicitud se valida contra la hora de America/New_York (corte 3:00 p.m.)</span>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Mis solicitudes (<span id="requests-count">0</span>)</h2>
+      <div class="grid" id="requests"></div>
+      <div class="empty" id="requests-empty">Todavia no hay solicitudes. Envia una arriba.</div>
+    </section>
+
+    <section class="panel">
+      <h2>Emails simulados</h2>
+      <div id="emails"></div>
+      <div class="empty" id="emails-empty">Sin emails enviados todavia.</div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <script src="/client.js"></script>
+</body>
+</html>
