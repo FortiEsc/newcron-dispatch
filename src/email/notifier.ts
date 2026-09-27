@@ -22,15 +22,6 @@ export class EmailNotifier {
     });
   }
 
-  sendResult(result: ResultPayload, to: string): EmailRecord {
-    return this.send({
-      shipperOrderId: result.shipperOrderId,
-      to,
-      subject: `Dispatch ${result.shipperOrderId} - ${result.status}`,
-      body: `${result.notes} (simulated email)`,
-    });
-  }
-
   private send(input: {
     shipperOrderId: string;
     to: string;

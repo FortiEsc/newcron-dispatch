@@ -18,7 +18,7 @@ export interface Broker {
   disconnect(): void;
   publish(topic: string, payload: unknown, applicationMessageId?: string): Promise<void>;
   consume(queueName: string, handler: MessageHandler): Promise<void>;
-  onStatusChange(listener: StatusListener): void;
+  onStatusChange(listener: StatusListener): () => void;
 }
 
 export function topicMatches(pattern: string, topic: string): boolean {

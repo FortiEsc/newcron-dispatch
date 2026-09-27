@@ -115,8 +115,12 @@ export class Store {
     return [...this.state.emails];
   }
 
-  onChange(listener: (event: StoreEvent) => void): void {
+  onChange(listener: (event: StoreEvent) => void): () => void {
     this.listeners.push(listener);
+    return () => {
+      const index = this.listeners.indexOf(listener);
+      if (index >= 0) this.listeners.splice(index, 1);
+    };
   }
 
   private emit(event: StoreEvent): void {

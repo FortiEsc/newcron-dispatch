@@ -100,8 +100,12 @@ export class SolaceBroker implements Broker {
     }
   }
 
-  onStatusChange(listener: StatusListener): void {
+  onStatusChange(listener: StatusListener): () => void {
     this.statusListeners.push(listener);
+    return () => {
+      const index = this.statusListeners.indexOf(listener);
+      if (index >= 0) this.statusListeners.splice(index, 1);
+    };
   }
 
   private openSession(): Promise<void> {

@@ -102,8 +102,12 @@ export class MockBroker implements Broker {
     await this.flush(queueName);
   }
 
-  onStatusChange(listener: StatusListener): void {
+  onStatusChange(listener: StatusListener): () => void {
     this.statusListeners.push(listener);
+    return () => {
+      const index = this.statusListeners.indexOf(listener);
+      if (index >= 0) this.statusListeners.splice(index, 1);
+    };
   }
 
   browse(queueName: string): unknown[] {
