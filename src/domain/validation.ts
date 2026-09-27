@@ -131,6 +131,9 @@ export function validateDispatchRequest(
   if (typeof raw.transportationReleaseNotes === 'string') {
     request.transportationReleaseNotes = raw.transportationReleaseNotes;
   }
+  if (typeof raw.shipperEmail === 'string' && raw.shipperEmail.includes('@')) {
+    request.shipperEmail = raw.shipperEmail.trim();
+  }
 
   const today = ctx.now.startOf('day');
   const pickup = DateTime.fromISO(pickupDate, { zone: ctx.timezone }).startOf('day');

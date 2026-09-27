@@ -19,6 +19,7 @@ export interface DispatchRequest {
   stops: Stop[];
   vehicles: Vehicle[];
   transportationReleaseNotes?: string;
+  shipperEmail?: string;
 }
 
 export type ResultStatus = 'Accepted' | 'Cancelled' | 'CarrierAssigned';
