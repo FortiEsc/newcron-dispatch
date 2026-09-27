@@ -28,7 +28,8 @@ export class OrdersBoard {
     const orderId = String(payload.shipperOrderId);
     const existing = this.entries.get(orderId);
     if (existing) {
-      console.warn(`[board] pedido ${orderId} ya estaba disponible (redeliverie), se ignora`);
+      console.log(`[board] pedido ${orderId} ya estaba disponible, se ignora la reentrega`);
+      message.ack();
       return;
     }
 

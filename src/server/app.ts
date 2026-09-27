@@ -151,6 +151,8 @@ export function createApp(deps: AppDeps): express.Express {
       return res.status(503).json({ error: 'Broker no disponible, el pedido sigue abierto' });
     }
 
+    entry.ack();
+
     const record = store.get(orderId);
     if (record?.request) {
       notifier.sendCarrierAssigned(record.request, carrierId);
