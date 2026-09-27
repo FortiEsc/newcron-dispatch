@@ -205,8 +205,8 @@ export class SolaceBroker implements Broker {
       connectRetryTimeout: CONNECT_TIMEOUT_MS,
       reconnectAttempts: 10,
       reconnectIntervalInMsecs: 2000,
-      transportAcknowledgeTimeoutInMsecs: 20000,
-      transportAcknowledgeThresholdPercentage: 80,
+      transportAcknowledgeTimeoutInMsecs: 1000,
+      transportAcknowledgeThresholdPercentage: 50,
     });
 
     consumer.on(solace.MessageConsumerEventName.UP, () => {

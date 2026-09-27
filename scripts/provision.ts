@@ -43,6 +43,12 @@ function describe(payload: unknown): string {
   return JSON.stringify(payload, null, 2);
 }
 
+function isNotFound(result: { status: number; json: unknown }): boolean {
+  if (result.status === 404) return true;
+  const error = (result.json as { meta?: { error?: { status?: string } } } | null)?.meta?.error;
+  return result.status === 400 && error?.status === 'NOT_FOUND';
+}
+
 async function ensureQueue(queueName: string): Promise<void> {
   const path = `/msgVpns/${encodeURIComponent(vpnName)}/queues/${encodeURIComponent(queueName)}`;
   const existing = await semp('GET', path);
@@ -50,7 +56,7 @@ async function ensureQueue(queueName: string): Promise<void> {
     console.log(`  = cola ya existe: ${queueName}`);
     return;
   }
-  if (existing.status !== 404) {
+  if (!isNotFound(existing)) {
     throw new Error(`GET cola ${queueName} devolvio ${existing.status}: ${describe(existing.json)}`);
   }
 
@@ -60,9 +66,8 @@ async function ensureQueue(queueName: string): Promise<void> {
     permission: 'consume',
     ingressEnabled: true,
     egressEnabled: true,
-    maxMsgSpoolUsage: 100,
-    TTL: 0,
-    maxDeliveryCount: 10,
+    maxMsgSpoolUsage: 5000,
+    maxTtl: 0,
   });
   if (created.status < 200 || created.status >= 300) {
     throw new Error(`POST cola ${queueName} devolvio ${created.status}: ${describe(created.json)}`);
@@ -79,7 +84,7 @@ async function ensureSubscription(queueName: string, subscriptionTopic: string):
     console.log(`  = suscripcion ya existe: ${queueName} <- ${subscriptionTopic}`);
     return;
   }
-  if (existing.status !== 404) {
+  if (!isNotFound(existing)) {
     throw new Error(
       `GET suscripcion devolvio ${existing.status}: ${describe(existing.json)}`
     );

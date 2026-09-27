@@ -60,6 +60,34 @@ async function waitForServer(timeoutMs: number): Promise<boolean> {
   return false;
 }
 
+async function waitForOrder(orderId: string, timeoutMs = 15000): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const orders = await request('GET', '/api/orders');
+    const found = (orders.body?.orders ?? []).some(
+      (order: any) => order.shipperOrderId === orderId
+    );
+    if (found) return true;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  return false;
+}
+
+async function waitForRequestStatus(
+  orderId: string,
+  status: string,
+  timeoutMs = 15000
+): Promise<ApiResponse> {
+  const deadline = Date.now() + timeoutMs;
+  let last: ApiResponse = { httpStatus: 0, body: null };
+  while (Date.now() < deadline) {
+    last = await request('GET', `/api/requests/${orderId}`);
+    if (last.body?.status === status) return last;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  return last;
+}
+
 function samplePayload(overrides: Record<string, any>): Record<string, any> {
   const pickup = DateTime.now().setZone(ZONE).plus({ days: 3 });
   return {
@@ -149,10 +177,7 @@ async function runScenarios(): Promise<void> {
   );
 
   console.log('\n6) El pedido valido esta en la cola del dashboard');
-  const orders = await request('GET', '/api/orders');
-  const inQueue = (orders.body?.orders ?? []).some(
-    (order: any) => order.shipperOrderId === valid.shipperOrderId
-  );
+  const inQueue = await waitForOrder(valid.shipperOrderId);
   check(inQueue, `pedido ${valid.shipperOrderId} disponible para transportistas`);
 
   console.log('\n7) Un transportista acepta la carga');
@@ -173,7 +198,7 @@ async function runScenarios(): Promise<void> {
   check(r7b.httpStatus === 404, 'segunda aceptacion rechazada', String(r7b.httpStatus));
 
   console.log('\n8) El cliente ve el resultado y el email simulado');
-  const record = await request('GET', `/api/requests/${valid.shipperOrderId}`);
+  const record = await waitForRequestStatus(valid.shipperOrderId, 'CarrierAssigned');
   check(record.body?.status === 'CarrierAssigned', 'estado final CarrierAssigned', record.body?.status);
   check(
     (record.body?.history ?? []).length >= 2,
